@@ -11,6 +11,8 @@ import {
 import { drawCircle } from "./drawing/circle.js";
 import { drawSquare } from "./drawing/square.js";
 import { drawRectangle } from "./drawing/rectangle.js";
+import { printScreen } from "./printScreen/printscreen.js";
+import { logResult } from "./helpers/logResult.js";
 
 const HTTP_PORT = 3000;
 httpServer.listen(HTTP_PORT);
@@ -22,36 +24,49 @@ httpServer.on("listening", () => {
 const wsServer = new WebSocketServer({ port: 8080 });
 
 wsServer.on("connection", (ws, request) => {
-  ws.on("message", (message) => {
+  ws.on("message", async (message) => {
     const input = getInput(message.toString());
-    console.log(message.toString());
     if (input.command === "mouse_up") {
       mouseUp(input.value);
       ws.send(`${input.command}`);
+      logResult(input.command);
     } else if (input.command === "mouse_down") {
       mouseDown(input.value);
       ws.send(`${input.command}`);
+      logResult(input.command);
     } else if (input.command === "mouse_left") {
       mouseLeft(input.value);
       ws.send(`${input.command}`);
+      logResult(input.command);
     } else if (input.command === "mouse_right") {
       mouseRight(input.value);
       ws.send(`${input.command}`);
+      logResult(input.command);
     } else if (input.command === "mouse_position") {
       const mousePos = getMousePosition();
-      console.log(mousePos);
       ws.send(`${input.command} {${mousePos.x}px},{${mousePos.y}px}`);
+      logResult(
+        input.command,
+        `${input.command} {${mousePos.x}px},{${mousePos.y}px}`
+      );
     } else if (input.command === "draw_circle") {
       drawCircle(input.value);
       ws.send(`${input.command}`);
+      logResult(input.command);
     } else if (input.command === "draw_square") {
       drawSquare(input.value);
       ws.send(`${input.command}`);
+      logResult(input.command);
     } else if (input.command === "draw_rectangle") {
       if (input.value2) {
         drawRectangle(input.value, input.value2);
         ws.send(`${input.command}`);
+        logResult(input.command);
       }
+    } else if (input.command === "prnt_scrn") {
+      const imageObject = await printScreen();
+      ws.send(`${input.command} ${imageObject.base64}`);
+      logResult(input.command, imageObject.base64);
     }
   });
 });
