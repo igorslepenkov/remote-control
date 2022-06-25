@@ -8,6 +8,9 @@ import {
   mouseRight,
   getMousePosition,
 } from "./navigation/navigation.js";
+import { drawCircle } from "./drawing/circle.js";
+import { drawSquare } from "./drawing/square.js";
+import { drawRectangle } from "./drawing/rectangle.js";
 
 const HTTP_PORT = 3000;
 httpServer.listen(HTTP_PORT);
@@ -21,6 +24,7 @@ const wsServer = new WebSocketServer({ port: 8080 });
 wsServer.on("connection", (ws, request) => {
   ws.on("message", (message) => {
     const input = getInput(message.toString());
+    console.log(message.toString());
     if (input.command === "mouse_up") {
       mouseUp(input.value);
       ws.send(`${input.command}`);
@@ -37,6 +41,17 @@ wsServer.on("connection", (ws, request) => {
       const mousePos = getMousePosition();
       console.log(mousePos);
       ws.send(`${input.command} {${mousePos.x}px},{${mousePos.y}px}`);
+    } else if (input.command === "draw_circle") {
+      drawCircle(input.value);
+      ws.send(`${input.command}`);
+    } else if (input.command === "draw_square") {
+      drawSquare(input.value);
+      ws.send(`${input.command}`);
+    } else if (input.command === "draw_rectangle") {
+      if (input.value2) {
+        drawRectangle(input.value, input.value2);
+        ws.send(`${input.command}`);
+      }
     }
   });
 });
