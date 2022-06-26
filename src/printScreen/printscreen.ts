@@ -4,7 +4,12 @@ import Jimp from "jimp";
 const printScreen = async () => {
   const mousePos = robot.getMousePos();
 
-  const img = robot.screen.capture(mousePos.x, mousePos.y, 200, 200);
+  const img = robot.screen.capture(
+    mousePos.x - 100,
+    mousePos.y - 100,
+    200,
+    200
+  );
 
   const jimp = new Jimp({ data: img.image, width: 200, height: 200 });
 
