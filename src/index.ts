@@ -78,6 +78,8 @@ wsServer.on("connection", (ws, request) => {
 
 process.on("SIGINT", () => {
   process.stdout.write("Websocket has been closed\n");
+  process.stdout.write("HTTP server has been closed");
   wsServer.close();
+  httpServer.close();
   process.exit();
 });
